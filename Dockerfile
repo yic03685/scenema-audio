@@ -146,5 +146,6 @@ ENV TMPDIR=/runpod-volume/tmp
 
 ENV GEMMA_QUANTIZE=nf4
 ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+ENV NUMBA_CACHE_DIR=/tmp/numba_cache
 
 CMD ["python3", "-u", "/app/src/runpod_handler.py"]
