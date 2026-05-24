@@ -37,12 +37,35 @@ logging.basicConfig(
 )
 logger = logging.getLogger("scenema-audio-runpod")
 
+# ── Debug: log volume and path info before anything else ──
+import shutil
+
+logger.info("=== RunPod Volume Debug ===")
+logger.info("/runpod-volume exists: %s", os.path.isdir("/runpod-volume"))
+if os.path.isdir("/runpod-volume"):
+    usage = shutil.disk_usage("/runpod-volume")
+    logger.info("/runpod-volume disk: total=%.1fGB free=%.1fGB", usage.total / 1e9, usage.free / 1e9)
+    try:
+        logger.info("/runpod-volume contents: %s", os.listdir("/runpod-volume"))
+    except Exception as e:
+        logger.warning("/runpod-volume listdir failed: %s", e)
+else:
+    logger.warning("/runpod-volume NOT FOUND — models will fail to load")
+
+for key in ["MODEL_DIR", "AUDIO_CKPT", "PIPELINE_CKPT", "VAE_ENCODER_CKPT",
+            "GEMMA_ROOT", "MELBAND_MODEL_PATH", "HF_HUB_CACHE", "HF_HUB_ENABLE_XET"]:
+    logger.info("ENV %s = %s", key, os.environ.get(key, "<not set>"))
+
 # Download models at import time (during cold start).
 # _download_models() checks if each file exists and only downloads if missing.
 from server import _download_models, MODEL_DIR
 
-logger.info("MODEL_DIR = %s", MODEL_DIR)
+logger.info("MODEL_DIR resolved to: %s", MODEL_DIR)
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+usage = shutil.disk_usage(str(MODEL_DIR))
+logger.info("MODEL_DIR disk: total=%.1fGB free=%.1fGB", usage.total / 1e9, usage.free / 1e9)
+
 _download_models()
 
 # Initialize processor once
