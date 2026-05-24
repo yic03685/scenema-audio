@@ -133,7 +133,7 @@ from audio_core.compiler import compile_prompt; print('audio_core OK')"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app/src
-ENV HF_HUB_ENABLE_XET=0
+ENV HF_HUB_DISABLE_XET=1
 
 # Model paths on RunPod network volume (mounted at /runpod-volume)
 ENV MODEL_DIR=/runpod-volume/models
