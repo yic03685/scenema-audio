@@ -83,6 +83,18 @@ if os.path.isdir("/runpod-volume"):
     os.symlink(seedvc_vol_dir, seedvc_ckpt_dir)
     logger.info("Symlinked %s -> %s", seedvc_ckpt_dir, seedvc_vol_dir)
 
+# Copy baked models from image to volume if not already there
+baked_models = [
+    "/app/models/MelBandRoformer_fp16.safetensors",
+    "/app/models/scenema-audio-vae-encoder.safetensors",
+]
+for src in baked_models:
+    if os.path.isfile(src):
+        dst = os.path.join(str(MODEL_DIR), os.path.basename(src))
+        if not os.path.isfile(dst):
+            logger.info("Copying baked model %s -> %s", src, dst)
+            shutil.copy2(src, dst)
+
 usage = shutil.disk_usage(str(MODEL_DIR))
 logger.info("MODEL_DIR disk: total=%.1fGB free=%.1fGB", usage.total / 1e9, usage.free / 1e9)
 
