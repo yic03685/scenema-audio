@@ -95,6 +95,9 @@ RUN pip install --no-cache-dir "kokoro==0.9.4" \
 # faster-whisper (speech validation)
 RUN pip install --no-cache-dir "faster-whisper==1.2.1" "ctranslate2==4.7.1"
 
+# Remove xet downloader — it ignores TMPDIR and fills the container disk
+RUN pip uninstall -y hf_xet 2>/dev/null || true
+
 # =============================================================================
 # Bake small models (<1 GB)
 # =============================================================================
