@@ -26,6 +26,16 @@ import os
 
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
+# Use RunPod network volume for model storage if available
+RUNPOD_VOLUME = "/runpod-volume/models"
+if os.path.isdir("/runpod-volume"):
+    os.environ.setdefault("MODEL_DIR", RUNPOD_VOLUME)
+    os.environ.setdefault("AUDIO_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-transformer-int8.safetensors")
+    os.environ.setdefault("VAE_ENCODER_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-vae-encoder.safetensors")
+    os.environ.setdefault("PIPELINE_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-pipeline.safetensors")
+    os.environ.setdefault("GEMMA_ROOT", f"{RUNPOD_VOLUME}/gemma-3-12b-it")
+    os.environ.setdefault("HF_HUB_CACHE", f"{RUNPOD_VOLUME}/hf_cache")
+
 import runpod
 
 from audio_core.processor import AudioProcessor
