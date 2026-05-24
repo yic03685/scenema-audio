@@ -130,16 +130,18 @@ from audio_core.compiler import compile_prompt; print('audio_core OK')"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONPATH=/app/src
-ENV HF_HUB_CACHE=/app/models/hf_cache
+ENV HF_HUB_ENABLE_XET=0
 
-# Default model paths (all large models downloaded at runtime into /app/models)
-ENV AUDIO_CKPT=/app/models/scenema-audio-transformer-int8.safetensors
-ENV VAE_ENCODER_CKPT=/app/models/scenema-audio-vae-encoder.safetensors
-ENV PIPELINE_CKPT=/app/models/scenema-audio-pipeline.safetensors
-ENV GEMMA_ROOT=/app/models/gemma-3-12b-it
-ENV MELBAND_MODEL_PATH=/app/models/MelBandRoformer_fp16.safetensors
+# Model paths on RunPod network volume (mounted at /runpod-volume)
+ENV MODEL_DIR=/runpod-volume/models
+ENV AUDIO_CKPT=/runpod-volume/models/scenema-audio-transformer-int8.safetensors
+ENV VAE_ENCODER_CKPT=/runpod-volume/models/scenema-audio-vae-encoder.safetensors
+ENV PIPELINE_CKPT=/runpod-volume/models/scenema-audio-pipeline.safetensors
+ENV GEMMA_ROOT=/runpod-volume/models/gemma-3-12b-it
+ENV MELBAND_MODEL_PATH=/runpod-volume/models/MelBandRoformer_fp16.safetensors
 ENV MELBAND_NODE_PATH=/app/melband_roformer_node
 ENV SEEDVC_PATH=/app/seed-vc
+ENV HF_HUB_CACHE=/runpod-volume/models/hf_cache
 
 ENV GEMMA_QUANTIZE=nf4
 ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
