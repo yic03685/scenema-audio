@@ -142,6 +142,7 @@ ENV MELBAND_MODEL_PATH=/runpod-volume/models/MelBandRoformer_fp16.safetensors
 ENV MELBAND_NODE_PATH=/app/melband_roformer_node
 ENV SEEDVC_PATH=/app/seed-vc
 ENV HF_HUB_CACHE=/runpod-volume/models/hf_cache
+ENV TMPDIR=/runpod-volume/tmp
 
 ENV GEMMA_QUANTIZE=nf4
 ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

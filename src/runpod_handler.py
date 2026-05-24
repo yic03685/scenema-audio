@@ -63,6 +63,11 @@ from server import _download_models, MODEL_DIR
 logger.info("MODEL_DIR resolved to: %s", MODEL_DIR)
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
+# Ensure TMPDIR exists on the volume so HF downloads don't fill the container disk
+tmpdir = os.environ.get("TMPDIR", "/tmp")
+os.makedirs(tmpdir, exist_ok=True)
+logger.info("TMPDIR = %s", tmpdir)
+
 usage = shutil.disk_usage(str(MODEL_DIR))
 logger.info("MODEL_DIR disk: total=%.1fGB free=%.1fGB", usage.total / 1e9, usage.free / 1e9)
 
