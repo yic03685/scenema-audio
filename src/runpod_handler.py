@@ -29,15 +29,16 @@ os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 # Disable xet downloader — causes "Background writer channel closed" on RunPod
 os.environ["HF_HUB_ENABLE_XET"] = "0"
 
-# Use RunPod network volume for model storage if available
+# Use RunPod network volume for model storage if available.
+# Must use os.environ[] (not setdefault) to override Dockerfile ENV values.
 RUNPOD_VOLUME = "/runpod-volume/models"
 if os.path.isdir("/runpod-volume"):
-    os.environ.setdefault("MODEL_DIR", RUNPOD_VOLUME)
-    os.environ.setdefault("AUDIO_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-transformer-int8.safetensors")
-    os.environ.setdefault("VAE_ENCODER_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-vae-encoder.safetensors")
-    os.environ.setdefault("PIPELINE_CKPT", f"{RUNPOD_VOLUME}/scenema-audio-pipeline.safetensors")
-    os.environ.setdefault("GEMMA_ROOT", f"{RUNPOD_VOLUME}/gemma-3-12b-it")
-    os.environ.setdefault("HF_HUB_CACHE", f"{RUNPOD_VOLUME}/hf_cache")
+    os.environ["MODEL_DIR"] = RUNPOD_VOLUME
+    os.environ["AUDIO_CKPT"] = f"{RUNPOD_VOLUME}/scenema-audio-transformer-int8.safetensors"
+    os.environ["VAE_ENCODER_CKPT"] = f"{RUNPOD_VOLUME}/scenema-audio-vae-encoder.safetensors"
+    os.environ["PIPELINE_CKPT"] = f"{RUNPOD_VOLUME}/scenema-audio-pipeline.safetensors"
+    os.environ["GEMMA_ROOT"] = f"{RUNPOD_VOLUME}/gemma-3-12b-it"
+    os.environ["HF_HUB_CACHE"] = f"{RUNPOD_VOLUME}/hf_cache"
 
 import runpod
 
