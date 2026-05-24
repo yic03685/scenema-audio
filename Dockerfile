@@ -2,17 +2,16 @@
 # https://scenema.ai
 # SPDX-License-Identifier: MIT
 #
-# Scenema Audio OSS image
+# Scenema Audio — RunPod Serverless
 #
 # Only models under 1 GB are baked into the image.
 # Large checkpoints (audio transformer, pipeline, Gemma, SeedVC)
-# are downloaded on first run and cached in a Docker volume.
+# are downloaded on first cold start and cached in a network volume.
 #
 # Build:
-#   docker compose build
+#   docker build -t scenema-audio .
 #
-# Run:
-#   HF_TOKEN=your_token docker compose up
+# Use a RunPod Network Volume mounted at /app/models to cache models.
 
 FROM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu24.04
 
@@ -77,7 +76,7 @@ RUN git clone --depth 1 https://github.com/kijai/ComfyUI-MelBandRoFormer /app/me
 RUN pip install --no-cache-dir "rotary-embedding-torch==0.8.9" "beartype==0.22.9"
 
 # =============================================================================
-# Server + service dependencies
+# Server + RunPod SDK
 # =============================================================================
 
 RUN pip install --no-cache-dir \
@@ -86,7 +85,7 @@ RUN pip install --no-cache-dir \
     "httpx==0.28.1" \
     "psutil==7.2.2" \
     "bitsandbytes==0.49.2" \
-    "gradio>=5.0.0,<6.0.0"
+    "runpod==1.7.9"
 
 # Kokoro TTS (82 MB, CPU-only, baked)
 RUN pip install --no-cache-dir "kokoro==0.9.4" \
@@ -144,8 +143,5 @@ ENV SEEDVC_PATH=/app/seed-vc
 
 ENV GEMMA_QUANTIZE=nf4
 ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-ENV PORT=8000
 
-EXPOSE 8000 7860
-
-CMD ["python3", "-m", "server"]
+CMD ["python3", "-u", "/app/src/runpod_handler.py"]
