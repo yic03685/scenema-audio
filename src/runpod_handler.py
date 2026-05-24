@@ -25,6 +25,12 @@ Returns base64-encoded WAV audio in the output.
 import base64
 import logging
 import os
+import sys
+
+# Block hf_xet at Python level BEFORE any huggingface_hub import.
+# xet ignores TMPDIR and writes temp files to the container disk, causing
+# "No space left on device". Setting it to None makes import fail gracefully.
+sys.modules["hf_xet"] = None
 
 import runpod
 
