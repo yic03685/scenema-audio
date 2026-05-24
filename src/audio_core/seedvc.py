@@ -25,6 +25,7 @@ import torch
 logger = logging.getLogger(__name__)
 
 DEFAULT_SEEDVC_PATH = Path(os.environ.get("SEEDVC_PATH", "/app/seed-vc"))
+DEFAULT_SEEDVC_CKPT = Path(os.environ.get("MODEL_DIR", "/app/models")) / "seedvc-checkpoints"
 DEFAULT_DIFFUSION_STEPS = 25
 DEFAULT_CFG_RATE = 0.5
 
@@ -36,8 +37,9 @@ class SeedVC:
     while preserving the source's delivery, emotion, and pacing.
     """
 
-    def __init__(self, seedvc_path: Path = DEFAULT_SEEDVC_PATH):
+    def __init__(self, seedvc_path: Path = DEFAULT_SEEDVC_PATH, ckpt_path: Path = DEFAULT_SEEDVC_CKPT):
         self.seedvc_path = seedvc_path
+        self.ckpt_path = ckpt_path
         self._loaded = False
         self._original_cwd: str | None = None
         self._app_vc = None
@@ -65,7 +67,7 @@ class SeedVC:
 
         os.environ.setdefault(
             "HF_HUB_CACHE",
-            str(self.seedvc_path / "checkpoints" / "hf_cache"),
+            str(self.ckpt_path / "hf_cache"),
         )
 
         # Patch BigVGAN for huggingface_hub compat (same as gpu_vc)

@@ -99,9 +99,8 @@ def _download_models():
             token=token,
         )
 
-    # SeedVC
-    seedvc_path = Path(os.environ.get("SEEDVC_PATH", "/app/seed-vc"))
-    seedvc_cache = seedvc_path / "checkpoints"
+    # SeedVC — download to MODEL_DIR so everything is on the network volume
+    seedvc_cache = MODEL_DIR / "seedvc-checkpoints"
     if not seedvc_cache.exists() or not any(seedvc_cache.glob("*.pth")):
         logger.info("Downloading SeedVC checkpoints (~1.6 GB)...")
         hf_cache = seedvc_cache / "hf_cache"
