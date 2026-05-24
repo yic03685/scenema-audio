@@ -68,6 +68,21 @@ tmpdir = os.environ.get("TMPDIR", "/tmp")
 os.makedirs(tmpdir, exist_ok=True)
 logger.info("TMPDIR = %s", tmpdir)
 
+# Symlink SeedVC checkpoints to network volume.
+# SEEDVC_PATH=/app/seed-vc has code files baked in the image, but checkpoints
+# (SeedVC .pth, BigVGAN, Whisper) download to /app/seed-vc/checkpoints/ which
+# is on the container disk (too small). Symlink to the network volume.
+seedvc_ckpt_dir = "/app/seed-vc/checkpoints"
+seedvc_vol_dir = "/runpod-volume/models/seedvc-checkpoints"
+if os.path.isdir("/runpod-volume"):
+    os.makedirs(seedvc_vol_dir, exist_ok=True)
+    if os.path.islink(seedvc_ckpt_dir):
+        os.unlink(seedvc_ckpt_dir)
+    elif os.path.isdir(seedvc_ckpt_dir):
+        shutil.rmtree(seedvc_ckpt_dir)
+    os.symlink(seedvc_vol_dir, seedvc_ckpt_dir)
+    logger.info("Symlinked %s -> %s", seedvc_ckpt_dir, seedvc_vol_dir)
+
 usage = shutil.disk_usage(str(MODEL_DIR))
 logger.info("MODEL_DIR disk: total=%.1fGB free=%.1fGB", usage.total / 1e9, usage.free / 1e9)
 
