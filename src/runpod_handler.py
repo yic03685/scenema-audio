@@ -26,6 +26,9 @@ import os
 
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 
+# Disable xet downloader — causes "Background writer channel closed" on RunPod
+os.environ["HF_HUB_ENABLE_XET"] = "0"
+
 # Use RunPod network volume for model storage if available
 RUNPOD_VOLUME = "/runpod-volume/models"
 if os.path.isdir("/runpod-volume"):
